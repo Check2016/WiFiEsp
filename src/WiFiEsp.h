@@ -209,6 +209,15 @@ public:
      */
     int32_t RSSI(uint8_t networkItem);
 
+	/*
+	 * Return the channel of the networks discovered during the scanNetworks
+	 *
+	 * param networkItem: specify from which network item want to get the information
+	 *
+	 * return: Channel of the specified item on the networks scanned list
+	 */
+	int32_t Channel(uint8_t networkItem);
+
 
 	// NOT IMPLEMENTED
 	//int hostByName(const char* aHostname, IPAddress& aResult);

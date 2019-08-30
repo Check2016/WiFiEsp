@@ -51,6 +51,7 @@ RingBuffer EspDrv::ringBuf(32);
 // Array of data to cache the information related to the networks discovered
 char 	EspDrv::_networkSsid[][WL_SSID_MAX_LENGTH] = {{"1"},{"2"},{"3"},{"4"},{"5"}};
 int32_t EspDrv::_networkRssi[WL_NETWORKS_LIST_MAXNUM] = { 0 };
+int32_t EspDrv::_networkChannel[WL_NETWORKS_LIST_MAXNUM] = { 0 };
 uint8_t EspDrv::_networkEncr[WL_NETWORKS_LIST_MAXNUM] = { 0 };
 
 // Cached values of retrieved data
@@ -488,6 +489,14 @@ uint8_t EspDrv::getScanNetworks()
 		readUntil(1000, ",");
 		
 		_networkRssi[ssidListNum] = espSerial->parseInt();
+
+		// discard , character
+		readUntil(1000, ",");
+
+		// discard , character
+		readUntil(1000, ",");
+
+		_networkChannel[ssidListNum] = espSerial->parseInt();
 		
 		idx = readUntil(1000, "+CWLAP:(");
 
@@ -532,7 +541,7 @@ bool EspDrv::getGateway(IPAddress& gw)
 	return false;
 }
 
-char* EspDrv::getSSIDNetoworks(uint8_t networkItem)
+char* EspDrv::getSSIDNetworks(uint8_t networkItem)
 {
 	if (networkItem >= WL_NETWORKS_LIST_MAXNUM)
 		return NULL;
@@ -540,7 +549,7 @@ char* EspDrv::getSSIDNetoworks(uint8_t networkItem)
 	return _networkSsid[networkItem];
 }
 
-uint8_t EspDrv::getEncTypeNetowrks(uint8_t networkItem)
+uint8_t EspDrv::getEncTypeNetworks(uint8_t networkItem)
 {
 	if (networkItem >= WL_NETWORKS_LIST_MAXNUM)
 		return 0;
@@ -548,12 +557,20 @@ uint8_t EspDrv::getEncTypeNetowrks(uint8_t networkItem)
     return _networkEncr[networkItem];
 }
 
-int32_t EspDrv::getRSSINetoworks(uint8_t networkItem)
+int32_t EspDrv::getRSSINetworks(uint8_t networkItem)
 {
 	if (networkItem >= WL_NETWORKS_LIST_MAXNUM)
 		return 0;
 
     return _networkRssi[networkItem];
+}
+
+int32_t EspDrv::getChannelNetworks(uint8_t networkItem)
+{
+	if (networkItem >= WL_NETWORKS_LIST_MAXNUM)
+		return 0;
+
+	return _networkChannel[networkItem];
 }
 
 char* EspDrv::getFwVersion()

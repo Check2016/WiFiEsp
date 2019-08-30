@@ -37,7 +37,7 @@ along with The Arduino WiFiEsp library.  If not, see
 #define WL_IPV4_LENGTH 4
 
 // Maximum size of a SSID list
-#define WL_NETWORKS_LIST_MAXNUM	10
+#define WL_NETWORKS_LIST_MAXNUM	20
 
 // Maxmium number of socket
 #define	MAX_SOCK_NUM		4
@@ -231,7 +231,7 @@ public:
 	 *
      * return: ssid string of the specified item on the networks scanned list
      */
-    static char* getSSIDNetoworks(uint8_t networkItem);
+    static char* getSSIDNetworks(uint8_t networkItem);
 
     /*
      * Return the RSSI of the networks discovered during the scanNetworks
@@ -240,7 +240,16 @@ public:
 	 *
      * return: signed value of RSSI of the specified item on the networks scanned list
      */
-    static int32_t getRSSINetoworks(uint8_t networkItem);
+    static int32_t getRSSINetworks(uint8_t networkItem);
+
+	/*
+	 * Return the channel of the networks discovered during the scanNetworks
+	 *
+	 * param networkItem: specify from which network item want to get the information
+	 *
+	 * return: Channel of the specified item on the networks scanned list
+	 */
+	static int32_t getChannelNetworks(uint8_t networkItem);
 
     /*
      * Return the encryption type of the networks discovered during the scanNetworks
@@ -249,7 +258,7 @@ public:
 	 *
      * return: encryption type (enum wl_enc_type) of the specified item on the networks scanned list
      */
-    static uint8_t getEncTypeNetowrks(uint8_t networkItem);
+    static uint8_t getEncTypeNetworks(uint8_t networkItem);
 
 
     /*
@@ -301,6 +310,7 @@ private:
 	// settings of requested network
 	static char 	_networkSsid[WL_NETWORKS_LIST_MAXNUM][WL_SSID_MAX_LENGTH];
 	static int32_t 	_networkRssi[WL_NETWORKS_LIST_MAXNUM];
+	static int32_t 	_networkChannel[WL_NETWORKS_LIST_MAXNUM];
 	static uint8_t 	_networkEncr[WL_NETWORKS_LIST_MAXNUM];
 
 
