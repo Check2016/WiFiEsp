@@ -134,7 +134,7 @@ public:
     /*
 	* Start the Access Point
 	*/
-	static bool wifiStartAP(const char* ssid, const char* pwd, uint8_t channel, uint8_t enc, uint8_t espMode);
+	static bool wifiStartAP(const char* ssid, const char* pwd, uint8_t channel, uint8_t enc, uint8_t espMode, bool ssidHidden = false, uint8_t maxConn = 4);
 
 
     /*

@@ -171,7 +171,7 @@ bool EspDrv::wifiConnect(const char* ssid, const char* passphrase)
 }
 
 
-bool EspDrv::wifiStartAP(const char* ssid, const char* pwd, uint8_t channel, uint8_t enc, uint8_t espMode)
+bool EspDrv::wifiStartAP(const char* ssid, const char* pwd, uint8_t channel, uint8_t enc, uint8_t espMode, bool ssidHidden, uint8_t maxConn)
 {
 	LOGDEBUG(F("> wifiStartAP"));
 
@@ -187,8 +187,11 @@ bool EspDrv::wifiStartAP(const char* ssid, const char* pwd, uint8_t channel, uin
 	// Escape character syntax is needed if "SSID" or "password" contains
 	// any special characters (',', '"' and '/')
 
+	if (maxConn > 4) { maxConn = 4; }
+	else if (maxConn < 1) { maxConn = 1; }
+
 	// start access point
-	ret = sendCmd(F("AT+CWSAP_CUR=\"%s\",\"%s\",%d,%d"), 10000, ssid, pwd, channel, enc);
+	ret = sendCmd(F("AT+CWSAP_CUR=\"%s\",\"%s\",%d,%d,%d,%d"), 10000, ssid, pwd, channel, enc, maxConn, (ssidHidden ? 1 : 0));
 
 	if (ret!=TAG_OK)
 	{
