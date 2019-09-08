@@ -218,6 +218,7 @@ public:
 	 */
 	int32_t Channel(uint8_t networkItem);
 
+	IPAddress* getClientIPs(uint8_t& length);
 
 	// NOT IMPLEMENTED
 	//int hostByName(const char* aHostname, IPAddress& aResult);

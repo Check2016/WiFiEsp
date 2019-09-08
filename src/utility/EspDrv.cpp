@@ -21,6 +21,7 @@ along with The Arduino WiFiEsp library.  If not, see
 
 #include "utility/EspDrv.h"
 #include "utility/debug.h"
+#include <ctype.h>
 
 
 #define NUMESPTAGS 5
@@ -515,6 +516,100 @@ uint8_t EspDrv::getScanNetworks()
 	LOGDEBUG1(F("---------------------------------------------- >"), ssidListNum);
 	LOGDEBUG();
     return ssidListNum;
+}
+
+IPAddress* EspDrv::getClientIPs(uint8_t& length)
+{
+	/*	Esp Response to: "AT+CIPSTATUS"
+
+		STATUS:<stat>
+
+		+CIPSTATUS:<link ID>,<type>,<remote	IP>,<remote	port>,<local port>,<tetype>
+		...
+
+		- <stat>: status of the ESP8266 Station interface.
+			2: The ESP8266 Station is connected to an AP and its IP is obtained.
+			3: The ESP8266 Station has created a TCP or UDP transmission.
+			4: The TCP or UDP transmission of ESP8266 Station is disconnected.
+			5: The ESP8266 Station does NOT connect to an AP.
+		- <link	ID>: ID of the connection (0~4), used for multiple connections.
+		- <type>: string parameter, "TCP" or "UDP".
+		- <remote IP>: string parameter indicating the remote IP address.
+		- <remote port>: the remote port number.
+		- <local port>: ESP8266 local port number.
+		- <tetype>:
+			0: ESP8266 runs as a client.
+			1: ESP8266 runs as a server.
+	*/
+
+	IPAddress IPs[4] = { nullptr };
+
+	uint8_t index = 0;
+	int idx;
+
+	espEmptyBuf();
+
+	LOGDEBUG(F("----------------------------------------------"));
+	LOGDEBUG(F(">> AT+CIPSTATUS"));
+
+	espSerial->println(F("AT+CWLIF"));
+
+	idx = readUntil(10000, ",");
+
+	while (idx == NUMESPTAGS)
+	{
+		// RingBuffer Content: "###.###.###.###,"
+		int len = ringBuf.getPos();
+		//Remove "," char
+		len = len - 1;
+
+		char buffer[len];
+		ringBuf.getStrN(buffer, 0, len);
+
+		char numBuffer[4][4] = {{0}};
+		uint8_t digitIndex = 0;
+		uint8_t numIndex = 0;
+
+		for (uint8_t i = 0; i < len; i++)
+		{
+			char c = buffer[i];
+
+			if (isdigit(c))
+			{
+				numBuffer[numIndex][digitIndex] = c;
+				digitIndex++;
+			}
+			else if (c == '.')
+			{
+				numIndex++;
+				digitIndex = 0;
+			}
+			else
+			{
+				break;
+			}
+		}
+
+		int num1 = atoi(numBuffer[0]);
+		int num2 = atoi(numBuffer[1]);
+		int num3 = atoi(numBuffer[2]);
+		int num4 = atoi(numBuffer[3]);
+
+		IPs[index] = IPAddress(num1, num2, num3, num4);
+		
+		idx = readUntil(1000, ",");
+
+		index++;
+	}
+
+	if (idx == -1)
+		return -1;
+
+	//Because we increment the index afterwards it equals the length of the discovered client IPs
+	length = index;
+
+	//return IPs;
+	return IPs;
 }
 
 bool EspDrv::getNetmask(IPAddress& mask) {

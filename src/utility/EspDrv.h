@@ -36,6 +36,8 @@ along with The Arduino WiFiEsp library.  If not, see
 // Size of a MAC-address or BSSID
 #define WL_IPV4_LENGTH 4
 
+#define WL_IPV4_STRING_MAX_LENGTH 15
+
 // Maximum size of a SSID list
 #define WL_NETWORKS_LIST_MAXNUM	20
 
@@ -260,6 +262,7 @@ public:
      */
     static uint8_t getEncTypeNetworks(uint8_t networkItem);
 
+	static IPAddress* getClientIPs(uint8_t& length);
 
     /*
      * Get the firmware version
@@ -312,7 +315,6 @@ private:
 	static int32_t 	_networkRssi[WL_NETWORKS_LIST_MAXNUM];
 	static int32_t 	_networkChannel[WL_NETWORKS_LIST_MAXNUM];
 	static uint8_t 	_networkEncr[WL_NETWORKS_LIST_MAXNUM];
-
 
 	// settings of current selected network
 	static char 	_ssid[WL_SSID_MAX_LENGTH];

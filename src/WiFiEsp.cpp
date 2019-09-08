@@ -181,6 +181,11 @@ uint8_t WiFiEspClass::status()
 	return EspDrv::getConnectionStatus();
 }
 
+IPAddress* WiFiEspClass::getClientIPs(uint8_t& length)
+{
+	return EspDrv::getClientIPs(length);
+}
+
 
 
 ////////////////////////////////////////////////////////////////////////////
